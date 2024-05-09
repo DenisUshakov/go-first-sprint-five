@@ -35,7 +35,11 @@ func (t Training) distance() float64 {
 // meanSpeed возвращает среднюю скорость бега или ходьбы.
 func (t Training) meanSpeed() float64 {
 	// вставьте ваш код ниже
-	return t.distance() / t.Duration.Hours()
+	durationHours := t.Duration.Hours()
+	if durationHours == 0 {
+		return 0
+	}
+	return t.distance() / durationHours
 }
 
 // Calories возвращает количество потраченных килокалорий на тренировке.
@@ -104,8 +108,12 @@ type Running struct {
 // Это переопределенный метод Calories() из Training.
 func (r Running) Calories() float64 {
 	// вставьте ваш код ниже
-	calories := ((CaloriesMeanSpeedMultiplier*r.Training.meanSpeed() + CaloriesMeanSpeedShift) * r.Training.Weight / MInKm * r.Training.TrainingInfo().Duration.Hours() * MinInHours)
-	return calories
+	durationHours := r.Training.TrainingInfo().Duration.Hours()
+	if durationHours == 0 {
+		return 0
+	}
+	result := ((CaloriesMeanSpeedMultiplier*r.Training.meanSpeed() + CaloriesMeanSpeedShift) * r.Training.Weight / MInKm * durationHours * MinInHours)
+	return result
 }
 
 // TrainingInfo возвращает структуру InfoMessage с информацией о проведенной тренировке.
@@ -143,8 +151,8 @@ type Walking struct {
 // Это переопределенный метод Calories() из Training.
 func (w Walking) Calories() float64 {
 	// вставьте ваш код ниже
-	calories := ((CaloriesWeightMultiplier*w.Training.Weight + (math.Pow(w.Training.meanSpeed(), 2)/(w.Height/CmInM))*CaloriesSpeedHeightMultiplier*w.Training.Weight) * w.Training.Duration.Hours() * MinInHours)
-	return calories
+	result := ((CaloriesWeightMultiplier*w.Training.Weight + (math.Pow(w.Training.meanSpeed(), 2)/(w.Height/CmInM))*CaloriesSpeedHeightMultiplier*w.Training.Weight) * w.Training.Duration.Hours() * MinInHours)
+	return result
 }
 
 // TrainingInfo возвращает структуру InfoMessage с информацией о проведенной тренировке.
@@ -182,7 +190,11 @@ type Swimming struct {
 // Это переопределенный метод Calories() из Training.
 func (s Swimming) meanSpeed() float64 {
 	// вставьте ваш код ниже
-	result := s.LengthPool * s.CountPool / MInKm / int(s.Training.Duration) / int(s.Training.Duration.Hours())
+	durationHours := s.Training.Duration.Hours()
+	if durationHours == 0 {
+		return 0
+	}
+	result := s.LengthPool * s.CountPool / MInKm / int(durationHours)
 	return float64(result)
 }
 
